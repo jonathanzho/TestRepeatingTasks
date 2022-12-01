@@ -12,10 +12,30 @@ android {
         minSdk 27
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName = (new java.text.SimpleDateFormat("yy.MM.dd-HHmm")).format(new Date()) +
+                "-" + "git rev-parse HEAD".execute().text.trim().substring(0,7)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    // Apk file name. Make sure length <= 127:
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def project = "trpt"
+            def SEP = "-"
+            def variantName = variant.name
+            def versionCode = defaultConfig.versionCode
+            def versionName = defaultConfig.versionName
+
+            def newApkName = project + SEP +
+                    variantName + SEP +
+                    versionCode + SEP +
+                    versionName + ".apk"
+
+            outputFileName = new File(newApkName)
+        }
+    }
+
 
     buildTypes {
         release {
